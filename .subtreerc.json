@@ -1,0 +1,8 @@
+[
+    {
+        "prefix": "common",
+        "url": "https://github.com/githbq/axios-ajax.git",
+        "alias": "axios",
+        "branch": "master"
+    }
+]
