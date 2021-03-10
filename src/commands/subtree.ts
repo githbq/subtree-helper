@@ -77,7 +77,7 @@ ${stringify([new SubtreeModel({ prefix: 'common', url: 'http://xx.xx', alias: 'l
             } catch (e) {
                 consoleColor.error(e)
                 console.log(1111,e.message)
-                if (e.message.indexOf('already exists') == -1) {
+                if (e.message.indexOf('already exists') !== -1) {
                     consoleColor.green(`目录:${io.pathTool.resolve(subtree.prefix)}已存在,请处理`)
                 }
             }
