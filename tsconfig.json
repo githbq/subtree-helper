@@ -17,9 +17,8 @@
         "newLine": "LF",
         "lib": ["es2017"],
         "typeRoots": ["node_modules/@types"],
-        "types": [
+        "types": [ 
             "cli-color",
-            "fs-extra",
             "jest",
             "lodash",
             "node"
