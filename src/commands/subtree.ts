@@ -73,11 +73,10 @@ ${stringify([new SubtreeModel({ prefix: 'common', url: 'http://xx.xx', alias: 'l
             try {
                 const cmdStr = `git subtree add --prefix=${subtree.prefix} ${subtree.url} ${subtree.branch} --squash`
                 consoleColor.start(cmdStr)
-                const { stdout, stderr } = await exec(cmdStr, {
-                    cwd
-                })
+                await exec(cmdStr, { cwd })
             } catch (e) {
                 consoleColor.error(e)
+                console.log(1111)
                 if (e.message.indexOf('already exists') == -1) {
                     consoleColor.green(`目录:${io.pathTool.resolve(subtree.prefix)}已存在,请处理`)
                 }
