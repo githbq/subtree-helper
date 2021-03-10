@@ -1,4 +1,4 @@
-import { exec, consoleColor, io, stringify } from '../lib'
+import { exec, consoleColor, io, stringify, cwd } from '../lib'
 import * as fs from 'fs'
 
 class SubtreeModel {
@@ -26,37 +26,42 @@ export default {
         consoleColor.green(
             `
 配置文件示例:
-${stringify([new SubtreeModel({ prefix: 'common', url: 'http://', alias: 'lib1', branch: 'master' })])}
+${stringify([new SubtreeModel({ prefix: 'common', url: 'http://xx.xx', alias: 'lib1', branch: 'master' })])}
 配置文件示例结束          
 `
         )
         this.init()
         switch (data.task) {
+            case 'status':
+                await this.gitStatus()
+                break
             case 'init':
                 // this.init(true)
                 break
             case 'add':
-                this.add()
+                await this.add()
                 break
             case 'pull':
-                this.pull()
+                await this.pull()
                 break
             case 'push':
-                this.push()
+                await this.push()
                 break
         }
 
     },
     async pull() {
+        if (!await this.isGitStatusOK()) return
         //git subtree pull --prefix=<子目录名> <远程地址> <分支> --squash
         const subtrees = await this.getSubtrees()
         for (let subtree of subtrees) {
-            await exec(`git subtree pull --prefix=${subtree.prefix} ${subtree.url} ${subtree.branch} --squash`)
+            await exec(`git subtree pull --prefix=${subtree.prefix} ${subtree.url} ${subtree.branch} --squash`, { cwd })
         }
     },
     async push(subtree: SubtreeModel) {
+        if (!await this.isGitStatusOK()) return
         //git subtree push --prefix=<子目录名> <远程地址> 分支
-        await exec(`git subtree push --prefix=${subtree.prefix} ${subtree.url} ${subtree.branch}`)
+        await exec(`git subtree push --prefix=${subtree.prefix} ${subtree.url} ${subtree.branch}`, { cwd })
     },
     async add() {
         console.log('--add')
@@ -68,6 +73,7 @@ ${stringify([new SubtreeModel({ prefix: 'common', url: 'http://', alias: 'lib1',
                 const cmdStr = `git subtree add --prefix=${subtree.prefix} ${subtree.url} ${subtree.branch} --squash`
                 consoleColor.start(cmdStr)
                 await exec(cmdStr, {
+                    cwd,
                     onStdout(msg) { consoleColor.green(msg) },
                     onStderr(msg) { consoleColor.green(msg, false) }
                 })
@@ -76,6 +82,14 @@ ${stringify([new SubtreeModel({ prefix: 'common', url: 'http://', alias: 'lib1',
             }
         }
     },
+    async isGitStatusOK() {
+        const { stdout } = await exec('git status', { cwd, preventDefault: false })
+        const result = stdout.indexOf('nothing to commit') !== -1
+        if (!result) {
+            consoleColor.red('请处理未提交的变更 git  commit -am <comment> ')
+        }
+        return result
+    },
     async save(subtree: SubtreeModel) {
         const subtrees = await this.getSubtrees()
         subtrees.push(subtree)
@@ -83,7 +97,6 @@ ${stringify([new SubtreeModel({ prefix: 'common', url: 'http://', alias: 'lib1',
         consoleColor.green(`写入${subtreeFilePath}成功`, true)
     },
     async getSubtrees() {
-        console.log('ddsdd', JSON.parse(fs.readFileSync(subtreeFilePath).toString()))
         return JSON.parse(fs.readFileSync(subtreeFilePath).toString()).map(n => new SubtreeModel(n))
     },
     async init(force = false) {
