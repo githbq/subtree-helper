@@ -73,9 +73,11 @@ ${stringify([new SubtreeModel({ prefix: 'common', url: 'http://xx.xx', alias: 'l
             try {
                 const cmdStr = `git subtree add --prefix=${subtree.prefix} ${subtree.url} ${subtree.branch} --squash`
                 consoleColor.start(cmdStr)
-                await exec(cmdStr, {
+                const { stdout, stderr } = await exec(cmdStr, {
                     cwd
                 })
+                console.log('stdoutstdoutstdout',stdout)
+                console.log('stderrstderrstderr',stderr)
             } catch (e) {
                 consoleColor.error(e)
             }
