@@ -76,10 +76,11 @@ ${stringify([new SubtreeModel({ prefix: 'common', url: 'http://xx.xx', alias: 'l
                 const { stdout, stderr } = await exec(cmdStr, {
                     cwd
                 })
-                console.log('stdoutstdoutstdout',stdout)
-                console.log('stderrstderrstderr',stderr)
             } catch (e) {
                 consoleColor.error(e)
+                if (e.message.indexOf('already exists') == -1) {
+                    consoleColor.green(`目录:${io.pathTool.resolve(subtree.prefix)}已存在,请处理`)
+                }
             }
         }
     },
