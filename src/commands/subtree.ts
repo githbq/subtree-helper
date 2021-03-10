@@ -61,9 +61,9 @@ ${stringify([new SubtreeModel({ prefix: 'common', url: 'http://xx.xx', alias: 'l
     async push(subtree: SubtreeModel) {
         if (!await this.isGitStatusOK()) return
         //git subtree push --prefix=<子目录名> <远程地址> 分支
-        await exec(`git subtree push --prefix=${subtree.prefix} ${subtree.url} ${subtree.branch}`, { cwd })
+        await exec(`git subtree push --prefix=${subtree.prefix} ${subtree.url} ${subtree.branch}`, { cwd, preventDefault: true })
     },
-    async add() { 
+    async add() {
         if (!await this.isGitStatusOK()) return
         console.log('--add')
         //git subtree add --prefix=<子目录名> <子仓库地址> <分支> --squash
@@ -79,7 +79,7 @@ ${stringify([new SubtreeModel({ prefix: 'common', url: 'http://xx.xx', alias: 'l
                     onStderr(msg) { msg && consoleColor.green(msg, false) }
                 })
             } catch (e) {
-                consoleColor.error(e) 
+                consoleColor.error(e)
             }
         }
     },
