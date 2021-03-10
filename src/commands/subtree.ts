@@ -64,8 +64,7 @@ ${stringify([new SubtreeModel({ prefix: 'common', url: 'http://xx.xx', alias: 'l
         await exec(`git subtree push --prefix=${subtree.prefix} ${subtree.url} ${subtree.branch}`, { cwd, preventDefault: true })
     },
     async add() {
-        if (!await this.isGitStatusOK()) return
-
+        if (!await this.isGitStatusOK()) return 
         //git subtree add --prefix=<子目录名> <子仓库地址> <分支> --squash
         const subtrees = await this.getSubtrees()
 
