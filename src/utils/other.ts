@@ -65,6 +65,26 @@ export function exec(cmd: string, opt?: any) {
   })
 }
 /**
+ * 执行shell命令
+ */
+export async function exec(cmd: string, opt?: any) {
+  consoleColor.start(cmd)
+  let response
+  try {
+    response = await spawn.exec(cmd, {
+      cwd,
+      onStdout(msg) {
+      },
+      onStderr(msg) {
+      }, preventDefault: false, ...opt
+    })
+  } catch (e) {
+    consoleColor.error(e)
+    response = false
+  }
+  return response
+}
+/**
  * 美化时间毫秒输出
  */
 export function prettyMs(ms: number) {
